@@ -12,23 +12,11 @@ const DateFact: FunctionComponent<Props> = ({month, day}) => {
   // State to hold the fact and validation status
   // Using string | null to handle the case when no fact is available
   const [fact, setFact] = useState<string | null>(null);
-  const [isValid, setIsValid] = useState(true);
 
   const fetchData = async () => {
 
-    // Resetting the fact and validation status before fetching new data
+    // Resetting the fact before fetching new data
     setFact(null);
-    const validDate = month >= 1 && month <= 12 && day >= 1 && day <= 31;
-
-    // If the date is not valid, set an error message and return early
-    if (!validDate) {
-      setFact('Invalid date');
-      setIsValid(false);
-      return
-    }
-
-    // If the date is valid, reset the fact and validation status
-    setIsValid(true);
 
     try {
         const response = await fetch(`https://numbersapi.p.rapidapi.com/${month}/${day}/date`, {
@@ -74,19 +62,12 @@ const DateFact: FunctionComponent<Props> = ({month, day}) => {
 
   return (
     <View style={styles.container}>
-      {isValid ? (
-        <View style={styles.factBox}>
-          <Text style={styles.factTitle}>Random Fact for {month} / {day}:</Text>
-          <Text style={styles.factText}>{fact}</Text>
-        </View>
-      ) : (
-        <Text style={styles.errorText}>
-          Invalid date. Please enter a valid month (1–12) and day (1-31).
-        </Text>
-      )}
+      <View style={styles.factBox}>
+        <Text style={styles.factTitle}>Random Fact for {month} / {day}:</Text>
+        <Text style={styles.factText}>{fact}</Text>
+      </View>
     </View>
-);
-
+  );
 }
 
 const styles = StyleSheet.create({
@@ -113,16 +94,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#444',
   },
-  errorText: {
-    color: 'red',
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: 10,
-  },
 });
-
-
-
-
 
 export default DateFact;

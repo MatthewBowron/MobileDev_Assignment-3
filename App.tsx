@@ -9,13 +9,18 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import DateFact from './components/dateFact';
-import { useState } from 'react';
+import { SetStateAction, useState } from 'react';
+import {Picker} from '@react-native-picker/picker';
 
+import DateFact from './components/dateFact';
+import monthData from './months.json'
 
 export default function App() {
-  const [month, setMonth] = useState(0);
+  const months = [...monthData];
+  const [monthIndex, setMonthIndex] = useState(-1);
   const [day, setDay] = useState(0);
+
+  const validDate = () => day >= 1 && day <= months[monthIndex].days;
 
   return (
     // Using KeyboardAvoidingView to handle keyboard appearance
@@ -30,26 +35,39 @@ export default function App() {
         <View style={styles.container}>
           <Text style={styles.title}>Enter a date to get a random fact</Text>
 
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Month:</Text>
+            <Picker 
+              mode='dropdown'
+              style = {Platform.OS === 'ios' ? styles.iosPicker : styles.inputWhite}
+              selectedValue={monthIndex}
+              onValueChange={(itemValue: number) => setMonthIndex(itemValue)}
+            >
+              <Picker.Item label={Platform.OS === 'ios' ? "" : "Select A Month:"} enabled={false} value={-1} />
+              {months.map( (month, index) => (
+                <Picker.Item key={month.number} label={month.name} value={index}  />
+              ))}
+            </Picker>
+          </View>
 
-          <Text style={styles.label}>Month:</Text>
-          <TextInput
-            style={styles.inputWhite}
-            placeholder="Enter month (1–12)"
-            keyboardType="number-pad"
-            onChangeText={(text) => setMonth(parseInt(text) || 0)}
-          />
+          {monthIndex!=-1 && <View> 
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Day:</Text>
+              <TextInput
+                style={styles.inputWhite}
+                placeholder={`Enter day (1–${months[monthIndex].days})`}
+                keyboardType="number-pad"
+                onChangeText={(text) => setDay(parseInt(text) || 0)}
+              />
+            </View>
 
+            {validDate() ? <DateFact month={months[monthIndex].number} day={day} /> : (
+              <Text style={styles.errorText}>
+                Invalid date. Please enter a day (1-{months[monthIndex].days}).
+              </Text>
+            )}
 
-          <Text style={styles.label}>Day:</Text>
-          <TextInput
-            style={styles.inputWhite}
-            placeholder="Enter day (1–31)"
-            keyboardType="number-pad"
-            onChangeText={(text) => setDay(parseInt(text) || 0)}
-          />
-
-
-          <DateFact month={month} day={day} />
+          </View>}
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -69,12 +87,22 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontWeight: '600',
   },
+  inputContainer: {
+    flexDirection:'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+  },
   label: {
-    alignSelf: 'flex-start',
-    marginTop: 10,
+    marginRight: 5,
     fontSize: 16,
     fontWeight: '500',
     color: '#333',
+  },
+  iosPicker: {
+    width: 200,
+    height: 210,
+    paddingHorizontal: 10,
   },
   inputWhite: {
     width: 200,
@@ -84,6 +112,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 8,
     paddingHorizontal: 10,
-    marginBottom: 10,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 10,
   },
 });
