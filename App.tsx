@@ -11,45 +11,58 @@ import {
 } from 'react-native';
 import DateFact from './components/dateFact';
 import { useState } from 'react';
-
+import { Picker } from '@react-native-picker/picker'; // 🆕 Picker added
 
 export default function App() {
-  const [month, setMonth] = useState(0);
-  const [day, setDay] = useState(0);
+  const [month, setMonth] = useState('');
+  const [day, setDay] = useState('');
 
   return (
-    // Using KeyboardAvoidingView to handle keyboard appearance
-    // and TouchableWithoutFeedback to dismiss the keyboard when tapping outside inputs
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      {/* Dismissing keyboard when tapping outside the input fields */}
-      {/* This is useful for better user experience on mobile devices */}
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <Text style={styles.title}>Enter a date to get a random fact</Text>
 
-
+          {/* created a dropdown menu for month */}
           <Text style={styles.label}>Month:</Text>
-          <TextInput
-            style={styles.inputWhite}
-            placeholder="Enter month (1–12)"
-            keyboardType="number-pad"
-            onChangeText={(text) => setMonth(parseInt(text) || 0)}
-          />
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={month}
+              onValueChange={(value) => setMonth(value)}
+              style={styles.picker}
+            >
+              <Picker.Item label="Select Month" value="" />
+              <Picker.Item label="January" value="1" />
+              <Picker.Item label="February" value="2" />
+              <Picker.Item label="March" value="3" />
+              <Picker.Item label="April" value="4" />
+              <Picker.Item label="May" value="5" />
+              <Picker.Item label="June" value="6" />
+              <Picker.Item label="July" value="7" />
+              <Picker.Item label="August" value="8" />
+              <Picker.Item label="September" value="9" />
+              <Picker.Item label="October" value="10" />
+              <Picker.Item label="November" value="11" />
+              <Picker.Item label="December" value="12" />
+            </Picker>
+          </View>
 
-
+          {/* Day Input */}
           <Text style={styles.label}>Day:</Text>
           <TextInput
             style={styles.inputWhite}
             placeholder="Enter day (1–31)"
             keyboardType="number-pad"
-            onChangeText={(text) => setDay(parseInt(text) || 0)}
+            onChangeText={(text) => setDay(text)}
           />
 
-
-          <DateFact month={month} day={day} />
+          {/* Render fact only if both values are set */}
+          {month && day ? (
+            <DateFact month={parseInt(month)} day={parseInt(day)} />
+          ) : null}
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -85,5 +98,18 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 10,
+  },
+  pickerWrapper: {
+    width: 200,
+    backgroundColor: '#fff',
+    borderColor: '#007BFF',
+    borderWidth: 2,
+    borderRadius: 8,
+    marginBottom: 10,
+    overflow: 'hidden',
+  },
+  picker: {
+    width: '100%',
+    height: 40,
   },
 });
