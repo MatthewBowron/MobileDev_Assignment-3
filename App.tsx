@@ -101,11 +101,11 @@ const styles = StyleSheet.create({
   },
   iosPicker: {
     width: 200,
-    height: 180,
+    height: 200,
   },
   androidPicker: {
     width: 200,
-    height: 40,
+    height: 80,
     backgroundColor: '#fff',
     borderColor: '#007BFF',
     borderWidth: 2,
@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
   pickerItem: {
     fontSize: 16,
     color: '#000',
+    height: 20
   },
   inputWhite: {
     width: 200,
